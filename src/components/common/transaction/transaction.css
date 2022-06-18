@@ -1,0 +1,20 @@
+.transaction-container {
+  background-color: aqua;
+  width: 60%;
+  min-height: 60px;
+  border-bottom: 2px solid #dcdcdc;
+  padding: 5px;
+  align-self: end;
+  display: flex;
+  align-items: center;
+  gap: 550px;
+  justify-content: end;
+}
+.transaction-container span {
+  font-size: 14px;
+}
+.transaction-container .description {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
