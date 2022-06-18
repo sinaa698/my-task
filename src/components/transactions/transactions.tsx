@@ -24,22 +24,22 @@ const Transactions: ReactFC<{}> = () => {
     getData();
   }, []);
 
-  const normalize = (data: any) => {
+  const addGeneralDate = (data: any) => {
     for (let i = 0; i < data.length; i++) {
       let keys = Object.keys(data[i]);
 
       for (let j = 0; j < keys.length; j++) {
         switch (keys[j]) {
           case "request_datetime":
-            data[i].transactionDate = data[i].request_datetime;
+            data[i].transactionDate = new Date(data[i].request_datetime);
             break;
 
           case "datetime":
-            data[i].transactionDate = data[i].datetime;
+            data[i].transactionDate = new Date(data[i].datetime);
             break;
 
           case "created_at":
-            data[i].transactionDate = data[i].created_at;
+            data[i].transactionDate = new Date(data[i].created_at);
             break;
         }
       }
@@ -49,9 +49,15 @@ const Transactions: ReactFC<{}> = () => {
   const normalizedData = React.useMemo(() => {
     if (data) {
       const myData = Object.entries(data)
-        .map(([key, values]) => values.map((v) => ({ ...v, type: key })))
+        .map(([key, values]) =>
+          values.map((v) => ({ ...v, type: key, transactionDate: new Date() }))
+        )
         .reduce((acc, curr) => [...acc, ...curr], []);
-      normalize(myData);
+      addGeneralDate(myData);
+
+      myData.sort(
+        (a, b) => b.transactionDate.getTime() - a.transactionDate.getTime()
+      );
 
       return myData;
     } else {
