@@ -1,17 +1,42 @@
 @import "../../../styles/variables.less";
 
-.transaction-container {
+.transaction {
   .card();
   .row();
-  gap: 550px;
+  gap: 450px;
   justify-content: end;
+  margin: 0 auto;
+  font-size: 14px;
 
-  span {
-    font-size: 14px;
+  &__price {
+    width: 30%;
+    text-align: left;
+
+    &--red {
+      color: @red;
+    }
+
+    &--green {
+      color: @green;
+    }
   }
 
   .description {
     .col();
+    width: 30%;
+    text-align: right;
     gap: 8px;
+
+    &__transaction-date {
+      color: @darkgray;
+    }
+    &__transaction-type {
+      &--red {
+        color: @red;
+      }
+      &--green {
+        color: @green;
+      }
+    }
   }
 }

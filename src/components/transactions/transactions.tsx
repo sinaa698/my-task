@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Transaction } from "./../../utils/models";
-import { ReactFC } from "./../../utils/types";
+import {
+  addTransactionDate,
+  addTransactionPrice,
+} from "../../utils/commonFunctions";
+import Transaction from "../common/transaction/transaction";
+import { ReactFC, TransactionType } from "./../../utils/types";
+import "./transactions.css";
 
 const Transactions: ReactFC<{}> = () => {
-  const [data, setData] = useState<Transaction>();
+  const [data, setData] = useState<TransactionType>();
 
   useEffect(() => {
     const getData = () => {
@@ -24,37 +29,21 @@ const Transactions: ReactFC<{}> = () => {
     getData();
   }, []);
 
-  const addGeneralDate = (data: any) => {
-    for (let i = 0; i < data.length; i++) {
-      let keys = Object.keys(data[i]);
-
-      for (let j = 0; j < keys.length; j++) {
-        switch (keys[j]) {
-          case "request_datetime":
-            data[i].transactionDate = new Date(data[i].request_datetime);
-            break;
-
-          case "datetime":
-            data[i].transactionDate = new Date(data[i].datetime);
-            break;
-
-          case "created_at":
-            data[i].transactionDate = new Date(data[i].created_at);
-            break;
-        }
-      }
-    }
-  };
-
   const normalizedData = React.useMemo(() => {
     if (data) {
       const myData = Object.entries(data)
         .map(([key, values]) =>
-          values.map((v) => ({ ...v, type: key, transactionDate: new Date() }))
+          values.map((v) => ({
+            ...v,
+            type: key,
+            transactionDate: new Date(),
+            transactionPrice: 0,
+          }))
         )
         .reduce((acc, curr) => [...acc, ...curr], []);
-      addGeneralDate(myData);
 
+      addTransactionDate(myData);
+      addTransactionPrice(myData);
       myData.sort(
         (a, b) => b.transactionDate.getTime() - a.transactionDate.getTime()
       );
@@ -65,9 +54,19 @@ const Transactions: ReactFC<{}> = () => {
     }
   }, [data]);
 
-  console.log(normalizedData);
-
-  return <div></div>;
+  return (
+    <div className="transactions">
+      <h1>تمام تراکنش ها</h1>
+      {data &&
+        normalizedData?.map((nd) => (
+          <Transaction
+            price={nd.transactionPrice}
+            transactionType={nd.type}
+            date={nd.transactionDate}
+          />
+        ))}
+    </div>
+  );
 };
 
 export default Transactions;

@@ -1,20 +1,40 @@
-.transaction-container {
-  background-color: aqua;
+.transaction {
+  background-color: white;
   width: 60%;
-  min-height: 60px;
-  border-bottom: 2px solid #dcdcdc;
-  padding: 5px;
+  min-height: 45px;
+  border-bottom: 1px solid #dcdcdc;
+  padding: 10px;
   align-self: end;
   display: flex;
   align-items: center;
-  gap: 550px;
+  gap: 450px;
   justify-content: end;
-}
-.transaction-container span {
+  margin: 0 auto;
   font-size: 14px;
 }
-.transaction-container .description {
+.transaction__price {
+  width: 30%;
+  text-align: left;
+}
+.transaction__price--red {
+  color: #e30b5d;
+}
+.transaction__price--green {
+  color: #52d017;
+}
+.transaction .description {
   display: flex;
   flex-direction: column;
+  width: 30%;
+  text-align: right;
   gap: 8px;
+}
+.transaction .description__transaction-date {
+  color: #a7a7a7;
+}
+.transaction .description__transaction-type--red {
+  color: #e30b5d;
+}
+.transaction .description__transaction-type--green {
+  color: #52d017;
 }
