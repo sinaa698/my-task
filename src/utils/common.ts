@@ -53,3 +53,11 @@ export const translateToFarsi = (word: string) => {
       return "پرداختی ها";
   }
 };
+
+export const transactionOptions = [
+  { label: "همه تراکنش ها", value: "all" },
+  { label: "هزینه سفر", value: "trip_financials" },
+  { label: "خرید ظرفیت همزمان", value: "concurrency_costs" },
+  { label: "هزینه متفرقه", value: "misc_expenses" },
+  { label: "پرداختی ها", value: "payments" },
+];

@@ -1,5 +1,5 @@
 import { ReactFC } from "../../../utils/types";
-import { translateToFarsi } from "./../../../utils/commonFunctions";
+import { translateToFarsi } from "../../../utils/common";
 import "./transaction.css";
 
 const Transaction: ReactFC<{
