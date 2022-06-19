@@ -17,29 +17,29 @@ export type TransactionType = {
 
 export type ConcurrencyCostType = {
   id: number;
-  created_at: Date;
+  created_at: string;
   amount: number;
-  start_date: Date;
-  end_date: Date;
+  start_date: string;
+  end_date: string;
 };
 
 export type MiscExpenseType = {
   id: number;
   title: string;
-  created_at: Date;
+  created_at: string;
   amount: number;
 };
 
 export type PaymentType = {
   id: number;
-  datetime: Date;
+  datetime: string;
   amount: number;
   description: string;
 };
 
 export type TripFinancialType = {
   id: number;
-  request_datetime: Date;
+  request_datetime: string;
   driver: string;
   final_price: number;
   source_title: string;

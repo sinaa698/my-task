@@ -3,20 +3,137 @@ import {
   addTransactionDate,
   addTransactionPrice,
   transactionOptions,
+  TransactionWithDateAndPrice,
 } from "../../utils/common";
 import Transaction from "../common/transaction/transaction";
-import { ReactFC, TransactionType } from "./../../utils/types";
+import { TransactionType, TripFinancialType } from "./../../utils/types";
 import Dropdown from "./../common/dropdown/dropdown";
+import SearchBar from "./../common/searchBar/searchBar";
 import "./transactions.css";
 
-const Transactions: ReactFC<{}> = () => {
-  const [data, setData] = useState<TransactionType>();
-  const [dropDownValue, setDropDownValue] = useState("all");
-  const [haveSearch, setHaveSearch] = useState(false);
+type Props = {
+  transactions: TransactionType;
+};
+
+const ShowTransactions = ({ transactions }: Props) => {
+  const [dropDownValue, setDropDownValue] = useState<
+    keyof TransactionType | "all"
+  >("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const normalizedData = React.useMemo(
+    () =>
+      Object.entries(transactions)
+        .map(([key, values]) =>
+          values.map((v) => ({
+            ...v,
+            type: key as keyof TransactionType,
+            transactionDate: null,
+            transactionPrice: 0,
+          }))
+        )
+        .reduce((acc, curr) => [...acc, ...curr], [])
+        .map(addTransactionDate)
+        .map((x) => ({ ...x, date: new Date(x.date) }))
+        .map(addTransactionPrice)
+        .sort((a, b) => b.date.getTime() - a.date.getTime()),
+    [transactions]
+  );
+
+  const haveSearch = React.useMemo(
+    () => dropDownValue === "trip_financials",
+    [dropDownValue]
+  );
+
+  const filtered = React.useMemo(() => {
+    if (searchQuery && dropDownValue === "trip_financials") {
+      return normalizedData
+        .filter((x) => x.type === "trip_financials")
+        .filter((x) =>
+          (x as TripFinancialType).driver
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        );
+    }
+
+    if (dropDownValue !== "all") {
+      return normalizedData.filter((x) => x.type === dropDownValue);
+    } else {
+      return normalizedData;
+    }
+  }, [dropDownValue, normalizedData, searchQuery]);
+
+  const handleTransactionTypesChange = React.useCallback(
+    (event: {
+      target: { value: React.SetStateAction<keyof TransactionType | "all"> };
+    }) => {
+      setDropDownValue(event.target.value);
+      if (event.target.value !== "trip_financials") {
+        setSearchQuery("");
+      }
+    },
+    [setDropDownValue, setSearchQuery]
+  );
+
+  const handleSearchBarChange = React.useCallback(
+    (event: { target: { value: React.SetStateAction<string> } }) => {
+      setSearchQuery(event.target.value);
+    },
+    [setSearchQuery]
+  );
+
+  const sortedByDate = React.useMemo(() => {
+    const byDate: Record<string, Array<TransactionWithDateAndPrice>> = {};
+
+    filtered.forEach((x) => {
+      const d = x.date.toLocaleString(undefined, {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
+      });
+
+      byDate[d] = [...(byDate[d] || []), x];
+    });
+
+    return byDate;
+  }, [filtered]);
+
+  return (
+    <div className="transactions">
+      <h1>تمام تراکنش ها</h1>
+      <div className="filter">
+        <Dropdown
+          options={transactionOptions}
+          label="نوع تراکنش"
+          value={dropDownValue}
+          onChange={handleTransactionTypesChange}
+        />
+        {haveSearch && <SearchBar onChange={handleSearchBarChange} />}
+      </div>
+      {Object.entries(sortedByDate).map(([key, values]) => (
+        <div>
+          <span>{key}</span>
+          {values.map((nd) => (
+            <Transaction
+              price={nd.price}
+              transactionType={nd.type}
+              date={nd.date}
+              key={nd.id}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const Transactions = () => {
+  const [data, setData] = useState<TransactionType>();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getData = () => {
+      setLoading(true);
       fetch("data.json", {
         headers: {
           "Content-Type": "application/json",
@@ -28,73 +145,17 @@ const Transactions: ReactFC<{}> = () => {
         })
         .then(function (myJson) {
           setData(myJson);
+          setLoading(false);
         });
     };
 
     getData();
   }, []);
 
-  const normalizedData = React.useMemo(() => {
-    if (data) {
-      const myData = Object.entries(data)
-        .map(([key, values]) =>
-          values.map((v) => ({
-            ...v,
-            type: key,
-            transactionDate: new Date(),
-            transactionPrice: 0,
-          }))
-        )
-        .reduce((acc, curr) => [...acc, ...curr], []);
-
-      addTransactionDate(myData);
-      addTransactionPrice(myData);
-
-      myData.sort(
-        (a, b) => b.transactionDate.getTime() - a.transactionDate.getTime()
-      );
-
-      return myData;
-    } else {
-      return undefined;
-    }
-  }, [data]);
-
-  let filtered = normalizedData;
-  if (haveSearch && searchQuery)
-    filtered = filtered?.filter((d) =>
-      d.type.toLowerCase().startsWith(searchQuery.toLowerCase())
-    );
-  else if (dropDownValue && dropDownValue !== "all") {
-    filtered = filtered?.filter((d) => d.type === dropDownValue);
-  }
-
-  const handleTransactionTypesChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setDropDownValue(event.target.value);
-    if (event.target.value !== "all") setHaveSearch(true);
-    else setHaveSearch(false);
-  };
-
-  return (
-    <div className="transactions">
-      <h1>تمام تراکنش ها</h1>
-      <Dropdown
-        options={transactionOptions}
-        label="نوع تراکنش"
-        value={dropDownValue}
-        onChange={handleTransactionTypesChange}
-      />
-      {data &&
-        filtered?.map((nd) => (
-          <Transaction
-            price={nd.transactionPrice}
-            transactionType={nd.type}
-            date={nd.transactionDate}
-          />
-        ))}
-    </div>
+  return data && !loading ? (
+    <ShowTransactions transactions={data} />
+  ) : (
+    <span>Loading...</span>
   );
 };
 
