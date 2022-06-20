@@ -3,8 +3,8 @@
   min-height: 45px;
   border-bottom: 1px solid #dcdcdc;
   padding: 10px;
-  -ms-flex-item-align: end;
-  align-self: end;
+  -ms-flex-item-align: flex-end;
+  align-self: flex-end;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -13,9 +13,9 @@
   -ms-flex-direction: row;
   flex-direction: row;
   width: 100%;
-  -webkit-box-pack: end;
-  -ms-flex-pack: end;
-  justify-content: end;
+  -webkit-box-pack: flex-end;
+  -ms-flex-pack: flex-end;
+  justify-content: flex-end;
   margin: 0 auto;
   font-size: 14px;
 }

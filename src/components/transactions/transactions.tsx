@@ -119,7 +119,7 @@ const ShowTransactions = ({ transactions }: Props) => {
         </div>
       </div>
       {Object.entries(sortedByDate).map(([key, values]) => (
-        <div>
+        <div key={key}>
           <TransactionDate date={key} />
           {values.map((nd) => (
             <Transaction
