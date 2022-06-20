@@ -1,8 +1,17 @@
 .drop-down {
   text-align: left;
+
   select {
     font-size: 12px;
     font-family: "Vazir";
     margin-right: 5px;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .drop-down {
+    &__label {
+      display: none;
+    }
   }
 }

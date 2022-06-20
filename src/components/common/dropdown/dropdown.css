@@ -6,3 +6,8 @@
   font-family: "Vazir";
   margin-right: 5px;
 }
+@media only screen and (max-width: 640px) {
+  .drop-down__label {
+    display: none;
+  }
+}
