@@ -12,23 +12,41 @@ export type TransactionUnion =
   | MiscExpenseType
   | ConcurrencyCostType;
 
-type TransactionWithType = TransactionUnion & { type: keyof TransactionType };
+type TransactionWithType = TransactionUnion & {
+  type: keyof TransactionType;
+};
 
-export const addTransactionDate = (x: TransactionWithType) => {
+export const convertTransactionDateAndPrice = (x: TransactionWithType) => {
   switch (x.type) {
     case "trip_financials":
-      return { ...x, date: (x as TripFinancialType).request_datetime };
+      return {
+        ...x,
+        date: (x as TripFinancialType).request_datetime,
+        price: (x as TripFinancialType).final_price,
+      };
     case "concurrency_costs":
-      return { ...x, date: (x as ConcurrencyCostType).created_at };
+      return {
+        ...x,
+        date: (x as ConcurrencyCostType).created_at,
+        price: (x as ConcurrencyCostType).amount,
+      };
     case "misc_expenses":
-      return { ...x, date: (x as MiscExpenseType).created_at };
+      return {
+        ...x,
+        date: (x as MiscExpenseType).created_at,
+        price: (x as MiscExpenseType).amount,
+      };
     case "payments":
-      return { ...x, date: (x as PaymentType).datetime };
+      return {
+        ...x,
+        date: (x as PaymentType).datetime,
+        price: (x as PaymentType).amount,
+      };
   }
 };
 
-export type TransactionWithMore = TransactionWithType & {
-  date: Date;
+export type TransactionWithExtra<D extends Date | string = Date> = TransactionWithType & {
+  date: D;
   price: number;
   driver?: string;
   start_date?: string;
@@ -37,21 +55,6 @@ export type TransactionWithMore = TransactionWithType & {
     title: string;
     id: number;
   };
-};
-
-export const addTransactionPrice = (
-  x: TransactionWithType & { date: Date }
-): TransactionWithMore => {
-  switch (x.type) {
-    case "trip_financials":
-      return { ...x, price: (x as TripFinancialType).final_price };
-    case "concurrency_costs":
-      return { ...x, price: (x as ConcurrencyCostType).amount };
-    case "misc_expenses":
-      return { ...x, price: (x as MiscExpenseType).amount };
-    case "payments":
-      return { ...x, price: (x as PaymentType).amount };
-  }
 };
 
 export const translateToFarsi = (word: string) => {

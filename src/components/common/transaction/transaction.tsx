@@ -27,8 +27,8 @@ const Transaction = ({
         <span className={`transaction__price${priceElementClass}`}>
           {price !== 0
             ? price > 0
-              ? `-${price.toLocaleString("fa-IR")}`
-              : `+${(-price).toLocaleString("fa-IR")}`
+              ? `- ${price.toLocaleString("fa-IR")}`
+              : `+ ${(-price).toLocaleString("fa-IR")}`
             : "رایگان"}
         </span>
       </div>

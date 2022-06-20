@@ -9,28 +9,39 @@
   .filter-bar {
     .row-reverse();
     width: 100%;
+    position: -webkit-sticky;
     position: sticky;
+    top: 0;
     margin: 0 auto;
+    background-color: @lightgray;
+    padding: 0 20px;
     h1 {
       width: 115px;
-      text-align: right;
+      text-align: center;
       font-size: 16px;
+      -ms-flex-item-align: center;
+      align-self: center;
     }
 
     .filter {
       .col();
       text-align: left;
+      -ms-flex-item-align: center;
       align-self: center;
       margin-right: auto;
     }
   }
 
   @media only screen and (max-width: 495px) {
+    .filter-bar {
+      padding: 0;
+    }
     .transactions {
       padding: 30px 0 !important;
     }
     h1 {
-      display: none;
+      width: 50px !important;
+      font-size: 12px !important;
     }
   }
 }

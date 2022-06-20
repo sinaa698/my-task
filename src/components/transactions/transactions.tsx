@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
-  addTransactionDate,
-  addTransactionPrice,
+  convertTransactionDateAndPrice,
   transactionOptions,
-  TransactionWithMore,
+  TransactionUnion,
+  TransactionWithExtra,
 } from "../../utils/common";
 import Transaction from "../common/transaction/transaction";
 import { TransactionType, TripFinancialType } from "./../../utils/types";
@@ -16,6 +16,19 @@ type Props = {
   transactions: TransactionType;
 };
 
+const addType = ([key, values]: [string, TransactionUnion[]]) =>
+  values.map((v) => ({
+    ...v,
+    type: key as keyof TransactionType,
+  }));
+
+const byDate = (a: TransactionWithExtra, b: TransactionWithExtra) =>
+  b.date.getTime() - a.date.getTime();
+
+const toDateObject = (
+  x: TransactionWithExtra<string>
+): TransactionWithExtra<Date> => ({ ...x, date: new Date(x.date) });
+
 const ShowTransactions = ({ transactions }: Props) => {
   const [dropDownValue, setDropDownValue] = useState<
     keyof TransactionType | "all"
@@ -25,17 +38,11 @@ const ShowTransactions = ({ transactions }: Props) => {
   const normalizedData = React.useMemo(
     () =>
       Object.entries(transactions)
-        .map(([key, values]) =>
-          values.map((v) => ({
-            ...v,
-            type: key as keyof TransactionType,
-          }))
-        )
+        .map(addType)
         .reduce((acc, curr) => [...acc, ...curr], [])
-        .map(addTransactionDate)
-        .map((x) => ({ ...x, date: new Date(x.date) }))
-        .map(addTransactionPrice)
-        .sort((a, b) => b.date.getTime() - a.date.getTime()),
+        .map(convertTransactionDateAndPrice)
+        .map(toDateObject)
+        .sort(byDate),
     [transactions]
   );
 
@@ -82,7 +89,7 @@ const ShowTransactions = ({ transactions }: Props) => {
   );
 
   const sortedByDate = React.useMemo(() => {
-    const byDate: Record<string, Array<TransactionWithMore>> = {};
+    const byDate: Record<string, Array<TransactionWithExtra>> = {};
 
     filtered.forEach((x) => {
       const d = x.date.toLocaleString(undefined, {
@@ -93,7 +100,6 @@ const ShowTransactions = ({ transactions }: Props) => {
 
       byDate[d] = [...(byDate[d] || []), x];
     });
-    console.log(byDate);
 
     return byDate;
   }, [filtered]);

@@ -1,16 +1,13 @@
+import { useMemo } from "react";
 import "./transactionDate.css";
+
 type Props = {
   date: string;
 };
 
 const TransactionDate = ({ date }: Props) => {
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  };
-  const d = new Date(date);
+  const d = useMemo(() => new Date(date), [date]);
+
   return (
     <div className="date">
       <span>{`${d.toLocaleDateString("fa-IR", {
