@@ -3,12 +3,13 @@ import {
   addTransactionDate,
   addTransactionPrice,
   transactionOptions,
-  TransactionWithDateAndPrice,
+  TransactionWithMore,
 } from "../../utils/common";
 import Transaction from "../common/transaction/transaction";
 import { TransactionType, TripFinancialType } from "./../../utils/types";
 import Dropdown from "./../common/dropdown/dropdown";
 import SearchBar from "./../common/searchBar/searchBar";
+import TransactionDate from "./../common/transactionDate/transactionDate";
 import "./transactions.css";
 
 type Props = {
@@ -28,8 +29,6 @@ const ShowTransactions = ({ transactions }: Props) => {
           values.map((v) => ({
             ...v,
             type: key as keyof TransactionType,
-            transactionDate: null,
-            transactionPrice: 0,
           }))
         )
         .reduce((acc, curr) => [...acc, ...curr], [])
@@ -83,7 +82,7 @@ const ShowTransactions = ({ transactions }: Props) => {
   );
 
   const sortedByDate = React.useMemo(() => {
-    const byDate: Record<string, Array<TransactionWithDateAndPrice>> = {};
+    const byDate: Record<string, Array<TransactionWithMore>> = {};
 
     filtered.forEach((x) => {
       const d = x.date.toLocaleString(undefined, {
@@ -94,31 +93,38 @@ const ShowTransactions = ({ transactions }: Props) => {
 
       byDate[d] = [...(byDate[d] || []), x];
     });
+    console.log(byDate);
 
     return byDate;
   }, [filtered]);
 
   return (
     <div className="transactions">
-      <h1>تمام تراکنش ها</h1>
-      <div className="filter">
-        <Dropdown
-          options={transactionOptions}
-          label="نوع تراکنش"
-          value={dropDownValue}
-          onChange={handleTransactionTypesChange}
-        />
-        {haveSearch && <SearchBar onChange={handleSearchBarChange} />}
+      <div className="filter-bar">
+        <h1>تمام تراکنش ها</h1>
+        <div className="filter">
+          <Dropdown
+            options={transactionOptions}
+            label="نوع تراکنش"
+            value={dropDownValue}
+            onChange={handleTransactionTypesChange}
+          />
+          {haveSearch && <SearchBar onChange={handleSearchBarChange} />}
+        </div>
       </div>
       {Object.entries(sortedByDate).map(([key, values]) => (
         <div>
-          <span>{key}</span>
+          <TransactionDate date={key} />
           {values.map((nd) => (
             <Transaction
               price={nd.price}
               transactionType={nd.type}
               date={nd.date}
               key={nd.id}
+              driver={nd.driver}
+              hub={nd.hub?.title}
+              concurrencyStartDate={nd.start_date}
+              concurrencyEndDate={nd.end_date}
             />
           ))}
         </div>

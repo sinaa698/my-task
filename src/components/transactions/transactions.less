@@ -1,13 +1,23 @@
-.transactions {
-  padding: 30px;
-  h1 {
-    width: 79%;
-    text-align: right;
-    font-size: 16px;
-    margin-bottom: 15px;
-  }
+@import "../../styles/variables.less";
 
-  .filter {
-    text-align: left;
+.transactions {
+  .col();
+  padding: 30px;
+
+  .filter-bar {
+    .row-reverse();
+    width: 60%;
+    position: sticky;
+    margin: 0 auto;
+    h1 {
+      text-align: right;
+      font-size: 16px;
+    }
+
+    .filter {
+      .col();
+      text-align: left;
+      align-self: center;
+    }
   }
 }

@@ -1,14 +1,25 @@
-import { ReactFC } from "../../../utils/types";
 import { translateToFarsi } from "../../../utils/common";
 import "./transaction.css";
 
-const Transaction: ReactFC<{
+const Transaction = ({
+  price,
+  date,
+  transactionType,
+  driver,
+  hub,
+  concurrencyStartDate,
+  concurrencyEndDate,
+}: {
   price: number;
   date: Date;
   transactionType: string;
-}> = ({ price, date, transactionType }) => {
-  const priceElementClass = price < 0 ? "--red" : "--green";
-  const TypeElementClass = price < 0 ? "--red" : "--green";
+  driver?: string;
+  hub?: string;
+  concurrencyStartDate?: string;
+  concurrencyEndDate?: string;
+}) => {
+  const priceElementClass = price > 0 ? "--red" : "--green";
+  const TypeElementClass = price > 0 ? "--red" : "--green";
 
   return (
     <div className="transaction">
@@ -16,8 +27,8 @@ const Transaction: ReactFC<{
         <span className={`transaction__price${priceElementClass}`}>
           {price !== 0
             ? price > 0
-              ? `+${price.toLocaleString("fa-IR")}`
-              : price.toLocaleString("fa-IR")
+              ? `-${price.toLocaleString("fa-IR")}`
+              : `+${(-price).toLocaleString("fa-IR")}`
             : "رایگان"}
         </span>
       </div>
@@ -33,6 +44,19 @@ const Transaction: ReactFC<{
         <span className={`description__transaction-type${TypeElementClass}`}>
           {translateToFarsi(transactionType)}
         </span>
+        <div className="extra-info">
+          {driver && <span>{`کوریر: ${driver}`}</span>}
+          {hub && <span>{`شعبه: ${hub}`}</span>}
+        </div>
+        {concurrencyStartDate && concurrencyEndDate && (
+          <p className="description__concurrency-date">
+            {`خرید ظرفیت از تاریخ ${new Date(
+              concurrencyStartDate
+            ).toLocaleDateString("fa-IR")} تا تاریخ ${new Date(
+              concurrencyEndDate
+            ).toLocaleDateString("fa-IR")}`}
+          </p>
+        )}
       </div>
     </div>
   );

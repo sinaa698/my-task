@@ -27,14 +27,21 @@ export const addTransactionDate = (x: TransactionWithType) => {
   }
 };
 
-export type TransactionWithDateAndPrice = TransactionWithType & {
+export type TransactionWithMore = TransactionWithType & {
   date: Date;
   price: number;
+  driver?: string;
+  start_date?: string;
+  end_date?: string;
+  hub?: {
+    title: string;
+    id: number;
+  };
 };
 
 export const addTransactionPrice = (
   x: TransactionWithType & { date: Date }
-): TransactionWithDateAndPrice => {
+): TransactionWithMore => {
   switch (x.type) {
     case "trip_financials":
       return { ...x, price: (x as TripFinancialType).final_price };
@@ -46,32 +53,6 @@ export const addTransactionPrice = (
       return { ...x, price: (x as PaymentType).amount };
   }
 };
-
-// export const addFarsiType = (data: any) => {
-//   for (let i = 0; i < data.length; i++) {
-//     let keys = Object.keys(data[i]);
-
-//     for (let j = 0; j < keys.length; j++) {
-//       switch (keys[j]) {
-//         case "trip_financials":
-//           data[i].farsiType = "هزینه سفر";
-//           break;
-
-//         case "concurrency_costs":
-//           data[i].farsiType = "خرید ظرفیت همزمان";
-//           break;
-
-//         case "misc_expenses":
-//           data[i].farsiType = "هزینه متفرقه";
-//           break;
-
-//         case "payments":
-//           data[i].farsiType = "پرداختی ها";
-//           break;
-//       }
-//     }
-//   }
-// };
 
 export const translateToFarsi = (word: string) => {
   switch (word) {
@@ -85,7 +66,7 @@ export const translateToFarsi = (word: string) => {
       return "هزینه متفرقه";
 
     case "payments":
-      return "پرداختی ها";
+      return "شارژ حساب";
   }
 };
 
@@ -94,5 +75,5 @@ export const transactionOptions = [
   { label: "هزینه سفر", value: "trip_financials" },
   { label: "خرید ظرفیت همزمان", value: "concurrency_costs" },
   { label: "هزینه متفرقه", value: "misc_expenses" },
-  { label: "پرداختی ها", value: "payments" },
+  { label: "شارژ حساب", value: "payments" },
 ];
